@@ -11,7 +11,9 @@ import {Picker} from '@react-native-picker/picker';
 import {fetchData} from './src/services/api';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {Week, Contribution, ContributionDay} from './src/type';
+import {testWeeksData} from './test';
 
+const testData = testWeeksData;
 // const formatContributionsToWeeks = (contributions: Contribution[]): Week[] => {
 //   const weeksMap: Record<string, ContributionDay[]> = {};
 
@@ -41,6 +43,7 @@ import {Week, Contribution, ContributionDay} from './src/type';
 // };
 
 const GitHubCalendar = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [calendarData, setCalendarData] = useState<Week[]>([]);
   const [username, setUsername] = useState('');
   const [period, setPeriod] = useState('6months');
@@ -84,8 +87,35 @@ const GitHubCalendar = () => {
         <Picker.Item label="1年" value="1year" />
       </Picker>
 
-      <View style={styles.calendar}>
+      {/* <View style={styles.calendar}>
         {calendarData.map((week, weekIndex) => (
+          <View key={weekIndex} style={styles.week}>
+            {week.contributionDays.map((day, dayIndex) => {
+              // 日付やコントリビューションのデータをコンソールに出力
+              return (
+                <View
+                  key={dayIndex}
+                  style={[
+                    styles.day,
+                    {
+                      backgroundColor: getColorForContribution(
+                        day.contributionCount,
+                      ),
+                    },
+                  ]}>
+                  <Text style={styles.tooltip}>
+                    {`${day.date}: ${day.contributionCount}`}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        ))}
+      </View> */}
+
+      <View style={styles.calendar}>
+        <View>テストデータ</View>
+        {testData.map((week, weekIndex) => (
           <View key={weekIndex} style={styles.week}>
             {week.contributionDays.map((day, dayIndex) => {
               // 日付やコントリビューションのデータをコンソールに出力
