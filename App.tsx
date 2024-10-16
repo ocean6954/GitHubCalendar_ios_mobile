@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -12,8 +12,11 @@ import {fetchData} from './src/services/api';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {Week, Contribution, ContributionDay} from './src/type';
 import {testWeeksData} from './test';
+import axios from 'axios';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const testData = testWeeksData;
+
 // const formatContributionsToWeeks = (contributions: Contribution[]): Week[] => {
 //   const weeksMap: Record<string, ContributionDay[]> = {};
 
@@ -47,6 +50,7 @@ const GitHubCalendar = () => {
   const [calendarData, setCalendarData] = useState<Week[]>([]);
   const [username, setUsername] = useState('');
   const [period, setPeriod] = useState('6months');
+  const [contributions, setContributions] = useState<Contribution[]>([]);
 
   const handleSubmit = async () => {
     if (username) {
@@ -63,6 +67,20 @@ const GitHubCalendar = () => {
       setCalendarData(weeks);
     }
   };
+
+  useEffect(() => {
+    const fetchRailsData = async () => {
+      try {
+        const response: Contribution[] = await axios.get('/api/contributions');
+        console.log('レスポンスデータ', response);
+        setContributions(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchRailsData();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -113,9 +131,10 @@ const GitHubCalendar = () => {
         ))}
       </View> */}
 
+      {/* //以下はテストデータでの試み */}
       <View style={styles.calendar}>
         <View>テストデータ</View>
-        {testData.map((week, weekIndex) => (
+        {/* {testData.map((week, weekIndex) => (
           <View key={weekIndex} style={styles.week}>
             {week.contributionDays.map((day, dayIndex) => {
               // 日付やコントリビューションのデータをコンソールに出力
@@ -137,7 +156,28 @@ const GitHubCalendar = () => {
               );
             })}
           </View>
-        ))}
+        ))} */}
+        <View style={styles.week}>
+          {contributions.map((day, dayIndex) => {
+            // 日付やコントリビューションのデータをコンソールに出力
+            return (
+              <View
+                key={dayIndex}
+                style={[
+                  styles.day,
+                  {
+                    backgroundColor: getColorForContribution(
+                      day.contributionCount,
+                    ),
+                  },
+                ]}>
+                <Text style={styles.tooltip}>
+                  {`${day.date}: ${day.contributionCount}`}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
       </View>
     </ScrollView>
   );
