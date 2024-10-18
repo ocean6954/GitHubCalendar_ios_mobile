@@ -82,6 +82,8 @@ const GitHubCalendar = () => {
     fetchRailsData();
   }, []);
 
+  const getData = async () => {};
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.form}>
