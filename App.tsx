@@ -50,7 +50,7 @@ const GitHubCalendar = () => {
   const [calendarData, setCalendarData] = useState<Week[]>([]);
   const [username, setUsername] = useState('');
   const [period, setPeriod] = useState('6months');
-  const [contributions, setContributions] = useState<Contribution[]>([]);
+  const [contributionsRails, setContributions] = useState<Contribution[]>([]);
 
   const handleSubmit = async () => {
     if (username) {
@@ -68,26 +68,30 @@ const GitHubCalendar = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchRailsData = async () => {
-      try {
-        const response: Contribution[] = await axios.get('/api/contributions');
-        console.log('レスポンスデータ', response);
-        setContributions(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchRailsData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         'http://127.0.0.1:3000/api/contributions',
+  //       );
+  //       console.log('レスポンスデータ', response.data);
+  //       setContributions(response.data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
 
-    fetchRailsData();
-  }, []);
+  //   fetchRailsData();
+  // }, []);
 
   const getRailsData = () => {
     const fetchRailsData = async () => {
       try {
-        const response: Contribution[] = await axios.get('/api/contributions');
-        console.log('レスポンスデータ', response);
-        setContributions(response);
+        const response = await axios.get(
+          'http://127.0.0.1:3000/api/contributions',
+        );
+        // console.log('レスポンスデータ', response.data);
+        setContributions(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -98,6 +102,7 @@ const GitHubCalendar = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {console.log('ライス', contributionsRails)}
       <View style={styles.form}>
         <TextInput
           style={styles.input}
@@ -109,7 +114,7 @@ const GitHubCalendar = () => {
         <Button title="Load Contributions" onPress={handleSubmit} />
       </View>
 
-      <Text>期間を選択:</Text>
+      {/* <Text>期間を選択:</Text>
       <Picker
         selectedValue={period}
         style={styles.picker}
@@ -117,7 +122,7 @@ const GitHubCalendar = () => {
         <Picker.Item label="3ヶ月" value="3months" />
         <Picker.Item label="半年" value="6months" />
         <Picker.Item label="1年" value="1year" />
-      </Picker>
+      </Picker> */}
 
       {/* <View style={styles.calendar}>
         {calendarData.map((week, weekIndex) => (
@@ -147,7 +152,7 @@ const GitHubCalendar = () => {
 
       {/* //以下はテストデータでの試み */}
       <View style={styles.calendar}>
-        <View>テストデータ</View>
+        <Text>テストデータ</Text>
         {/* {testData.map((week, weekIndex) => (
           <View key={weekIndex} style={styles.week}>
             {week.contributionDays.map((day, dayIndex) => {
@@ -173,25 +178,27 @@ const GitHubCalendar = () => {
         ))} */}
         <Button title="Railsからデータ取得" onPress={getRailsData} />
         <View style={styles.week}>
-          {contributions.map((day, dayIndex) => {
-            // 日付やコントリビューションのデータをコンソールに出力
-            return (
-              <View
-                key={dayIndex}
-                style={[
-                  styles.day,
-                  {
-                    backgroundColor: getColorForContribution(
-                      day.contributionCount,
-                    ),
-                  },
-                ]}>
-                <Text style={styles.tooltip}>
-                  {`${day.date}: ${day.contributionCount}`}
-                </Text>
-              </View>
-            );
-          })}
+          {contributionsRails &&
+            contributionsRails.map((day, dayIndex) => {
+              // 日付やコントリビューションのデータをコンソールに出力
+              return (
+                <View
+                  key={dayIndex}
+                  style={[
+                    styles.day,
+                    {
+                      backgroundColor: getColorForContribution(
+                        day.contribution_c
+                        ount,
+                      ),
+                    },
+                  ]}>
+                  <Text style={styles.tooltip}>
+                    {`${day.date}: ${day.contributionCount}`}
+                  </Text>
+                </View>
+              );
+            })}
         </View>
       </View>
     </ScrollView>
