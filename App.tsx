@@ -82,7 +82,19 @@ const GitHubCalendar = () => {
     fetchRailsData();
   }, []);
 
-  const getData = async () => {};
+  const getRailsData = () => {
+    const fetchRailsData = async () => {
+      try {
+        const response: Contribution[] = await axios.get('/api/contributions');
+        console.log('レスポンスデータ', response);
+        setContributions(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchRailsData();
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -159,6 +171,7 @@ const GitHubCalendar = () => {
             })}
           </View>
         ))} */}
+        <Button title="Railsからデータ取得" onPress={getRailsData} />
         <View style={styles.week}>
           {contributions.map((day, dayIndex) => {
             // 日付やコントリビューションのデータをコンソールに出力
