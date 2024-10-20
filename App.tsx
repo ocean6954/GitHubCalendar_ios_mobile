@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -9,12 +10,16 @@ import {
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {fetchData} from './src/services/api';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {Week, Contribution, ContributionDay} from './src/type';
+
+import {
+  Week,
+  Contribution,
+  ContributionDay,
+  ContributionRails,
+} from './src/type';
 import {testWeeksData} from './test';
 import axios from 'axios';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const testData = testWeeksData;
 
 // const formatContributionsToWeeks = (contributions: Contribution[]): Week[] => {
@@ -46,11 +51,12 @@ const testData = testWeeksData;
 // };
 
 const GitHubCalendar = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [calendarData, setCalendarData] = useState<Week[]>([]);
   const [username, setUsername] = useState('');
   const [period, setPeriod] = useState('6months');
-  const [contributionsRails, setContributions] = useState<Contribution[]>([]);
+  const [contributionsRails, setContributions] = useState<ContributionRails[]>(
+    [],
+  );
 
   const handleSubmit = async () => {
     if (username) {
@@ -83,6 +89,8 @@ const GitHubCalendar = () => {
 
   //   fetchRailsData();
   // }, []);
+
+  const formatRailsData = (data: Contribution[]) => {};
 
   const getRailsData = () => {
     const fetchRailsData = async () => {
@@ -188,8 +196,7 @@ const GitHubCalendar = () => {
                     styles.day,
                     {
                       backgroundColor: getColorForContribution(
-                        day.contribution_c
-                        ount,
+                        day.contribution_count,
                       ),
                     },
                   ]}>

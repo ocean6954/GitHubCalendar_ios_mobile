@@ -12,3 +12,8 @@ export interface Contribution {
   date: string;
   contributionCount: number;
 }
+
+export interface ContributionRails {
+  date: string;
+  contribution_count: number;
+}
