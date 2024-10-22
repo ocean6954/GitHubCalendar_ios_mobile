@@ -119,7 +119,7 @@ const GitHubCalendar = () => {
   };
 
   const formatRailsData = (data: ContributionRails[]) => {
-    const weeksMap: Record<string, ContributionDay[]> = {};
+    const weeksMap: Record<string, ContributionRails[]> = {};
 
     data.forEach(contribution => {
       const weekStart = getWeekStart(contribution.date); // 日付を週ごとにグループ化
@@ -128,7 +128,7 @@ const GitHubCalendar = () => {
       }
       weeksMap[weekStart].push({
         date: contribution.date,
-        contributionCount: contribution.contribution_count,
+        contribution_count: contribution.contribution_count,
       });
     });
 
@@ -206,7 +206,7 @@ const GitHubCalendar = () => {
       {/* //以下はテストデータでの試み */}
       <View style={styles.calendar}>
         <Text>テストデータ</Text>
-        {/* {testData.map((week, weekIndex) => (
+        {formatRailsData(contributionsRails).map((week, weekIndex) => (
           <View key={weekIndex} style={styles.week}>
             {week.contributionDays.map((day, dayIndex) => {
               // 日付やコントリビューションのデータをコンソールに出力
@@ -217,20 +217,21 @@ const GitHubCalendar = () => {
                     styles.day,
                     {
                       backgroundColor: getColorForContribution(
-                        day.contributionCount,
+                        day.contribution_count,
                       ),
                     },
                   ]}>
                   <Text style={styles.tooltip}>
-                    {`${day.date}: ${day.contributionCount}`}
+                    {`${day.date}: ${day.contribution_count}`}
                   </Text>
                 </View>
               );
             })}
           </View>
-        ))} */}
+        ))}
+
         <Button title="Railsからデータ取得" onPress={getRailsData} />
-        <View style={styles.week}>
+        {/* <View style={styles.week}>
           {contributionsRails &&
             contributionsRails.map((day, dayIndex) => {
               // 日付やコントリビューションのデータをコンソールに出力
@@ -251,7 +252,7 @@ const GitHubCalendar = () => {
                 </View>
               );
             })}
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );
