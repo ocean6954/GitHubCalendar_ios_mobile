@@ -90,7 +90,52 @@ const GitHubCalendar = () => {
   //   fetchRailsData();
   // }, []);
 
-  const formatRailsData = (data: Contribution[]) => {};
+  // const formatContributionsToWeeks = (contributions: Contribution[]): Week[] => {
+  //   const weeksMap: Record<string, ContributionDay[]> = {};
+
+  //   contributions.forEach(contribution => {
+  //     const weekStart = getWeekStart(contribution.date); // 日付を週ごとにグループ化
+  //     if (!weeksMap[weekStart]) {
+  //       weeksMap[weekStart] = [];
+  //     }
+  //     weeksMap[weekStart].push({
+  //       date: contribution.date,
+  //       contributionCount: contribution.contributionCount,
+  //     });
+  //   });
+
+  //   return Object.keys(weeksMap).map(weekStart => ({
+  //     contributionDays: weeksMap[weekStart],
+  //   }));
+  // };
+
+  // 週の開始日を取得するヘルパー関数;
+  const getWeekStart = (date: string): string => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    const weekStart = new Date(d.setDate(diff));
+    return weekStart.toISOString().split('T')[0]; // YYYY-MM-DD形式で返す
+  };
+
+  const formatRailsData = (data: ContributionRails[]) => {
+    const weeksMap: Record<string, ContributionDay[]> = {};
+
+    data.forEach(contribution => {
+      const weekStart = getWeekStart(contribution.date); // 日付を週ごとにグループ化
+      if (!weeksMap[weekStart]) {
+        weeksMap[weekStart] = [];
+      }
+      weeksMap[weekStart].push({
+        date: contribution.date,
+        contributionCount: contribution.contribution_count,
+      });
+    });
+
+    return Object.keys(weeksMap).map(weekStart => ({
+      contributionDays: weeksMap[weekStart],
+    }));
+  };
 
   const getRailsData = () => {
     const fetchRailsData = async () => {
@@ -201,7 +246,7 @@ const GitHubCalendar = () => {
                     },
                   ]}>
                   <Text style={styles.tooltip}>
-                    {`${day.date}: ${day.contributionCount}`}
+                    {`${day.date}: ${day.contribution_count}`}
                   </Text>
                 </View>
               );
