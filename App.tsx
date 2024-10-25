@@ -54,14 +54,36 @@ const GitHubCalendar = () => {
   const [calendarData, setCalendarData] = useState<Week[]>([]);
   const [username, setUsername] = useState('');
   const [period, setPeriod] = useState('6months');
-  const [contributionsRails, setContributions] = useState<ContributionRails[]>(
-    [],
-  );
+  const [contributionsRails, setContributionsRails] = useState<
+    ContributionRails[]
+  >([]);
 
+  //weekを整えていく
   const handleSubmit = async () => {
     if (username) {
       const weeks = await fetchData(username, period);
+      // console.log('weeks is', weeks);
+      // console.log('JSonデータ', JSON.stringify(weeks, null, 2));
+
+      // console.log('コントリビューションデー', weeks.week.contributionDays);
+
+      weeks.forEach(week => {
+        console.log('Week contributionDays:', week.contributionDays);
+        week.contributionDays.forEach(day => {
+          console.log('Day contribution:', day);
+        });
+      });
+
+      setCalendarData(weeks);
+    }
+  };
+
+  const handleSubmitToRails = async () => {
+    if (username) {
+      const weeks = await fetchData(username, period);
       console.log('weeks is', weeks);
+      // console.log('コントリビューションデー', weeks.week.ContributionDays);
+
       setCalendarData(weeks);
     }
   };
@@ -81,7 +103,7 @@ const GitHubCalendar = () => {
   //         'http://127.0.0.1:3000/api/contributions',
   //       );
   //       console.log('レスポンスデータ', response.data);
-  //       setContributions(response.data);
+  //       setContributionsRails(response.data);
   //     } catch (error) {
   //       console.error(error);
   //     }
@@ -144,7 +166,7 @@ const GitHubCalendar = () => {
           'http://127.0.0.1:3000/api/contributions',
         );
         // console.log('レスポンスデータ', response.data);
-        setContributions(response.data);
+        setContributionsRails(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -155,11 +177,11 @@ const GitHubCalendar = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {console.log('ライス', contributionsRails)}
+      {/* {console.log('ライス', contributionsRails)} */}
       <View style={styles.form}>
         <TextInput
           style={styles.input}
-          placeholder="Enter GitHub username"
+          placeholder="GitHubのユーザー名を入れてください!"
           value={username}
           onChangeText={text => setUsername(text)}
           autoCapitalize="none"
@@ -167,7 +189,7 @@ const GitHubCalendar = () => {
         <Button title="Load Contributions" onPress={handleSubmit} />
       </View>
 
-      {/* <Text>期間を選択:</Text>
+      <Text>期間を選択:</Text>
       <Picker
         selectedValue={period}
         style={styles.picker}
@@ -175,7 +197,7 @@ const GitHubCalendar = () => {
         <Picker.Item label="3ヶ月" value="3months" />
         <Picker.Item label="半年" value="6months" />
         <Picker.Item label="1年" value="1year" />
-      </Picker> */}
+      </Picker>
 
       {/* <View style={styles.calendar}>
         {calendarData.map((week, weekIndex) => (

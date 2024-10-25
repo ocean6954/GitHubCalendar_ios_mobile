@@ -18,7 +18,7 @@ const getDateRange = period => {
 
 export const fetchData = async (username, period) => {
   const {from, to} = getDateRange(period);
-  console.log('token', REACT_APP_GITHUB_TOKEN);
+  console.log('tokenは', REACT_APP_GITHUB_TOKEN);
 
   const query = `
         {
