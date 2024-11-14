@@ -58,6 +58,21 @@ const GitHubCalendar = () => {
     ContributionRails[]
   >([]);
 
+  //week配列を受け取ってrailsに送る動作を実装したい
+  const postData = (week: Week) => {
+    const postRailsData = async () => {
+      try {
+        const response = await axios.get(
+          'http://127.0.0.1:3000/api/contributions',
+        );
+        // console.log('レスポンスデータ', response.data);
+        setContributionsRails(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  };
+
   //weekを整えていく
   const handleSubmit = async () => {
     if (username) {
@@ -65,12 +80,12 @@ const GitHubCalendar = () => {
       // console.log('weeks is', weeks);
       // console.log('JSonデータ', JSON.stringify(weeks, null, 2));
 
-      // console.log('コントリビューションデー', weeks.week.contributionDays);
+      console.log('コントリビューションデー', weeks[0].contributionDays);
 
       weeks.forEach(week => {
-        console.log('Week contributionDays:', week.contributionDays);
+        // console.log('Week contributionDays:', week.contributionDays);
         week.contributionDays.forEach(day => {
-          console.log('Day contribution:', day);
+          // console.log('Day contribution:', day);
         });
       });
 
@@ -131,12 +146,32 @@ const GitHubCalendar = () => {
   //   }));
   // };
 
-  // 週の開始日を取得するヘルパー関数;
-  const getWeekStart = (date: string): string => {
+  const ws = (date: string): string => {
     const d = new Date(date);
     const day = d.getDay();
+    const di = d.getDate() - day + (day === 0 ? -6 : 1);
+    const s = new Date(d.setDate(di));
+    return s.toISOString().split('T')[0];
+  };
+  // 週の開始日を取得するヘルパー関数;
+  const getWeekStart = (date: string): string => {
+    console.log('getWeekStartが呼び出されました！');
+    const d = new Date(date);
+    console.log('d is :', d);
+    const day = d.getDay();
+    console.log('day is :', day);
+
     const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    console.log('diff is :', diff);
+
     const weekStart = new Date(d.setDate(diff));
+    console.log('weekStart is :', weekStart);
+    console.log(
+      'weekStart.toISOString().split(T)[0] is :',
+      weekStart.toISOString().split('T')[0],
+    );
+    console.log(' ');
+
     return weekStart.toISOString().split('T')[0]; // YYYY-MM-DD形式で返す
   };
 
