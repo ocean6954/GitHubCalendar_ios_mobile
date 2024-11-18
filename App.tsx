@@ -51,7 +51,7 @@ const testData = testWeeksData;
 // };
 
 const GitHubCalendar = () => {
-  const [calendarData, setCalendarData] = useState<Week[]>([]);
+  const [calendarData, setCalendarData] = useState<Week>();
   const [username, setUsername] = useState('');
   const [period, setPeriod] = useState('6months');
   const [contributionsRails, setContributionsRails] = useState<
@@ -62,11 +62,11 @@ const GitHubCalendar = () => {
   const postData = (week: Week) => {
     const postRailsData = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.post(
           'http://127.0.0.1:3000/api/contributions',
+          week,
         );
-        // console.log('レスポンスデータ', response.data);
-        setContributionsRails(response.data);
+        console.log('postするデータ', week);
       } catch (error) {
         console.error(error);
       }
@@ -74,31 +74,9 @@ const GitHubCalendar = () => {
   };
 
   //weekを整えていく
-  const handleSubmit = async () => {
+  const getContribution = async () => {
     if (username) {
       const weeks = await fetchData(username, period);
-      // console.log('weeks is', weeks);
-      // console.log('JSonデータ', JSON.stringify(weeks, null, 2));
-
-      console.log('コントリビューションデー', weeks[0].contributionDays);
-
-      weeks.forEach(week => {
-        // console.log('Week contributionDays:', week.contributionDays);
-        week.contributionDays.forEach(day => {
-          // console.log('Day contribution:', day);
-        });
-      });
-
-      setCalendarData(weeks);
-    }
-  };
-
-  const handleSubmitToRails = async () => {
-    if (username) {
-      const weeks = await fetchData(username, period);
-      console.log('weeks is', weeks);
-      // console.log('コントリビューションデー', weeks.week.ContributionDays);
-
       setCalendarData(weeks);
     }
   };
@@ -111,48 +89,6 @@ const GitHubCalendar = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchRailsData = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         'http://127.0.0.1:3000/api/contributions',
-  //       );
-  //       console.log('レスポンスデータ', response.data);
-  //       setContributionsRails(response.data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   fetchRailsData();
-  // }, []);
-
-  // const formatContributionsToWeeks = (contributions: Contribution[]): Week[] => {
-  //   const weeksMap: Record<string, ContributionDay[]> = {};
-
-  //   contributions.forEach(contribution => {
-  //     const weekStart = getWeekStart(contribution.date); // 日付を週ごとにグループ化
-  //     if (!weeksMap[weekStart]) {
-  //       weeksMap[weekStart] = [];
-  //     }
-  //     weeksMap[weekStart].push({
-  //       date: contribution.date,
-  //       contributionCount: contribution.contributionCount,
-  //     });
-  //   });
-
-  //   return Object.keys(weeksMap).map(weekStart => ({
-  //     contributionDays: weeksMap[weekStart],
-  //   }));
-  // };
-
-  const ws = (date: string): string => {
-    const d = new Date(date);
-    const day = d.getDay();
-    const di = d.getDate() - day + (day === 0 ? -6 : 1);
-    const s = new Date(d.setDate(di));
-    return s.toISOString().split('T')[0];
-  };
   // 週の開始日を取得するヘルパー関数;
   const getWeekStart = (date: string): string => {
     console.log('getWeekStartが呼び出されました！');
@@ -221,7 +157,7 @@ const GitHubCalendar = () => {
           onChangeText={text => setUsername(text)}
           autoCapitalize="none"
         />
-        <Button title="Load Contributions" onPress={handleSubmit} />
+        <Button title="Load Contributions" onPress={getContribution} />
       </View>
 
       <Text>期間を選択:</Text>
@@ -233,6 +169,7 @@ const GitHubCalendar = () => {
         <Picker.Item label="半年" value="6months" />
         <Picker.Item label="1年" value="1year" />
       </Picker>
+      <Button title="データ登録" onPress={postData(calendarData :Week)} />
 
       {/* <View style={styles.calendar}>
         {calendarData.map((week, weekIndex) => (
