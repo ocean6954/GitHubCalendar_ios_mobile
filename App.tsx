@@ -59,18 +59,16 @@ const GitHubCalendar = () => {
   >([]);
 
   //week配列を受け取ってrailsに送る動作を実装したい
-  const postData = (week: Week) => {
-    const postRailsData = async () => {
-      try {
-        const response = await axios.post(
-          'http://127.0.0.1:3000/api/contributions',
-          week,
-        );
-        console.log('postするデータ', week);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  const postRailsData = async (week: Week) => {
+    try {
+      const postData = await axios.post(
+        'http://127.0.0.1:3000/api/contributions',
+        week,
+      );
+      console.log('postするデータ', postData);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   //weekを整えていく
@@ -169,7 +167,10 @@ const GitHubCalendar = () => {
         <Picker.Item label="半年" value="6months" />
         <Picker.Item label="1年" value="1year" />
       </Picker>
-      <Button title="データ登録" onPress={postData(calendarData :Week)} />
+      <Button
+        title="データ登録"
+        onPress={() => calendarData && postRailsData(calendarData)}
+      />
 
       {/* <View style={styles.calendar}>
         {calendarData.map((week, weekIndex) => (
