@@ -60,14 +60,17 @@ const GitHubCalendar = () => {
 
   //week配列を受け取ってrailsに送る動作を実装したい
   const postRailsData = async (week: Week) => {
-    try {
-      const postData = await axios.post(
-        'http://127.0.0.1:3000/api/contributions',
-        week,
-      );
-      console.log('postするデータ', postData);
-    } catch (error) {
-      console.error(error);
+    if (week) {
+      try {
+        const postData = await axios.post(
+          'http://127.0.0.1:3000/api/contributions',
+          week,
+        );
+        console.log('postに成功しました!');
+        console.log('postするデータ', postData);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -146,7 +149,6 @@ const GitHubCalendar = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* {console.log('ライス', contributionsRails)} */}
       <View style={styles.form}>
         <TextInput
           style={styles.input}
@@ -158,97 +160,50 @@ const GitHubCalendar = () => {
         <Button title="Load Contributions" onPress={getContribution} />
       </View>
 
-      <Text>期間を選択:</Text>
-      <Picker
-        selectedValue={period}
-        style={styles.picker}
-        onValueChange={value => handlePeriodChange(value)}>
-        <Picker.Item label="3ヶ月" value="3months" />
-        <Picker.Item label="半年" value="6months" />
-        <Picker.Item label="1年" value="1year" />
-      </Picker>
-      <Button
-        title="データ登録"
-        onPress={() => calendarData && postRailsData(calendarData)}
-      />
-
-      {/* <View style={styles.calendar}>
-        {calendarData.map((week, weekIndex) => (
-          <View key={weekIndex} style={styles.week}>
-            {week.contributionDays.map((day, dayIndex) => {
-              // 日付やコントリビューションのデータをコンソールに出力
-              return (
-                <View
-                  key={dayIndex}
-                  style={[
-                    styles.day,
-                    {
-                      backgroundColor: getColorForContribution(
-                        day.contributionCount,
-                      ),
-                    },
-                  ]}>
-                  <Text style={styles.tooltip}>
-                    {`${day.date}: ${day.contributionCount}`}
-                  </Text>
-                </View>
-              );
-            })}
-          </View>
-        ))}
-      </View> */}
-
-      {/* //以下はテストデータでの試み */}
-      <View style={styles.calendar}>
-        <Text>テストデータ</Text>
-        {formatRailsData(contributionsRails).map((week, weekIndex) => (
-          <View key={weekIndex} style={styles.week}>
-            {week.contributionDays.map((day, dayIndex) => {
-              // 日付やコントリビューションのデータをコンソールに出力
-              return (
-                <View
-                  key={dayIndex}
-                  style={[
-                    styles.day,
-                    {
-                      backgroundColor: getColorForContribution(
-                        day.contribution_count,
-                      ),
-                    },
-                  ]}>
-                  <Text style={styles.tooltip}>
-                    {`${day.date}: ${day.contribution_count}`}
-                  </Text>
-                </View>
-              );
-            })}
-          </View>
-        ))}
-
-        <Button title="Railsからデータ取得" onPress={getRailsData} />
-        {/* <View style={styles.week}>
-          {contributionsRails &&
-            contributionsRails.map((day, dayIndex) => {
-              // 日付やコントリビューションのデータをコンソールに出力
-              return (
-                <View
-                  key={dayIndex}
-                  style={[
-                    styles.day,
-                    {
-                      backgroundColor: getColorForContribution(
-                        day.contribution_count,
-                      ),
-                    },
-                  ]}>
-                  <Text style={styles.tooltip}>
-                    {`${day.date}: ${day.contribution_count}`}
-                  </Text>
-                </View>
-              );
-            })}
-        </View> */}
+      <View style={styles.pickerContainer}>
+        <Text style={styles.text}>期間を選択:</Text>
+        <Picker
+          selectedValue={period}
+          style={styles.picker}
+          onValueChange={value => handlePeriodChange(value)}>
+          <Picker.Item label="3ヶ月" value="3months" />
+          <Picker.Item label="半年" value="6months" />
+          <Picker.Item label="1年" value="1year" />
+        </Picker>
+        <Button
+          title="データ登録"
+          onPress={() => calendarData && postRailsData(calendarData)}
+        />
       </View>
+
+      <Button title="Railsからデータ取得" onPress={getRailsData} />
+
+      {contributionsRails && (
+        <View style={styles.calendar}>
+          {formatRailsData(contributionsRails).map((week, weekIndex) => (
+            <View key={weekIndex} style={styles.week}>
+              {week.contributionDays.map((day, dayIndex) => {
+                return (
+                  <View
+                    key={dayIndex}
+                    style={[
+                      styles.day,
+                      {
+                        backgroundColor: getColorForContribution(
+                          day.contribution_count,
+                        ),
+                      },
+                    ]}>
+                    <Text style={styles.tooltip}>
+                      {`${day.date}: ${day.contribution_count}`}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          ))}
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -270,15 +225,24 @@ const getColorForContribution = (count: number) => {
 };
 
 const styles = StyleSheet.create({
+  text: {
+    fontSize: 16,
+  },
   container: {
     marginTop: 20,
     padding: 20,
     alignItems: 'center',
+    // backgroundColor: '#f9f9f9',
+    backgroundColor: 'red',
+    height: '100%',
   },
   form: {
     flexDirection: 'row',
-    marginBottom: 20,
+    margin: 40,
     alignItems: 'center',
+    width: '100%',
+    justifyContent: 'center', // 中央揃え
+    backgroundColor: 'blue',
   },
   input: {
     height: 40,
@@ -287,24 +251,51 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     flex: 1,
     marginRight: 10,
+    borderRadius: 5, // 角を丸く
+    // backgroundColor: '#fff',
+    backgroundColor: 'yellow',
+  },
+  pickerContainer: {
+    width: '80%',
+    backgroundColor: 'orange',
+    alignItems: 'center',
+    marginBottom: 40,
   },
   picker: {
-    height: 50,
     width: 150,
-    marginBottom: 20,
+    // marginBottom: 20,
+    borderRadius: 5, // ピッカーの角を丸く
+    backgroundColor: '#fff', // 背景を白に
+    backgroundColor: 'green',
   },
   calendar: {
     flexDirection: 'row',
+    flexWrap: 'wrap', // 要素を折り返すように変更
+    justifyContent: 'center', // 中央揃え
+    padding: 10,
+    marginTop: 40,
+    backgroundColor: '#fff',
+    backgroundColor: 'aqua',
+
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // 影を追加
   },
   week: {
-    flexDirection: 'column',
+    flexDirection: 'column', // カラムからロウへ変更
     marginBottom: 5,
+    justifyContent: 'center',
   },
   day: {
     width: 20,
     height: 20,
     marginRight: 2,
     marginBottom: 2,
+    borderRadius: 4, // 丸みを追加
+    backgroundColor: '#e0e0e0', // デフォルトの背景色
   },
   tooltip: {
     fontSize: 10,
