@@ -9,75 +9,26 @@ import {
   ScrollView,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import {fetchData} from './src/services/api';
+import {fetchData, postRailsData} from './src/services/api';
 
-import {
-  Week,
-  Contribution,
-  ContributionDay,
-  ContributionRails,
-} from './src/type';
+import {ContributionRails, Weeks} from './src/type';
 import {testWeeksData} from './test';
 import axios from 'axios';
 
 const testData = testWeeksData;
 
-// const formatContributionsToWeeks = (contributions: Contribution[]): Week[] => {
-//   const weeksMap: Record<string, ContributionDay[]> = {};
-
-//   contributions.forEach(contribution => {
-//     const weekStart = getWeekStart(contribution.date); // 日付を週ごとにグループ化
-//     if (!weeksMap[weekStart]) {
-//       weeksMap[weekStart] = [];
-//     }
-//     weeksMap[weekStart].push({
-//       date: contribution.date,
-//       contributionCount: contribution.contributionCount,
-//     });
-//   });
-
-//   return Object.keys(weeksMap).map(weekStart => ({
-//     contributionDays: weeksMap[weekStart],
-//   }));
-// };
-
-// 週の開始日を取得するヘルパー関数
-// const getWeekStart = (date: string): string => {
-//   const d = new Date(date);
-//   const day = d.getDay();
-//   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-//   const weekStart = new Date(d.setDate(diff));
-//   return weekStart.toISOString().split('T')[0]; // YYYY-MM-DD形式で返す
-// };
-
 const GitHubCalendar = () => {
-  const [calendarData, setCalendarData] = useState<Week>();
+  const [calendarData, setCalendarData] = useState<Weeks>();
   const [username, setUsername] = useState('');
   const [period, setPeriod] = useState('6months');
   const [contributionsRails, setContributionsRails] = useState<
     ContributionRails[]
   >([]);
 
-  //week配列を受け取ってrailsに送る動作を実装したい
-  const postRailsData = async (week: Week) => {
-    if (week) {
-      try {
-        const postData = await axios.post(
-          'http://127.0.0.1:3000/api/contributions',
-          week,
-        );
-        console.log('postに成功しました!');
-        console.log('postするデータ', postData);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
-
-  //weekを整えていく
   const getContribution = async () => {
     if (username) {
       const weeks = await fetchData(username, period);
+      console.log('weeksは', JSON.stringify(weeks, null, 2));
       setCalendarData(weeks);
     }
   };
@@ -92,23 +43,10 @@ const GitHubCalendar = () => {
 
   // 週の開始日を取得するヘルパー関数;
   const getWeekStart = (date: string): string => {
-    console.log('getWeekStartが呼び出されました！');
     const d = new Date(date);
-    console.log('d is :', d);
     const day = d.getDay();
-    console.log('day is :', day);
-
     const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    console.log('diff is :', diff);
-
     const weekStart = new Date(d.setDate(diff));
-    console.log('weekStart is :', weekStart);
-    console.log(
-      'weekStart.toISOString().split(T)[0] is :',
-      weekStart.toISOString().split('T')[0],
-    );
-    console.log(' ');
-
     return weekStart.toISOString().split('T')[0]; // YYYY-MM-DD形式で返す
   };
 
@@ -147,6 +85,10 @@ const GitHubCalendar = () => {
     fetchRailsData();
   };
 
+  const handleSubmit = () => {
+    postRailsData(calendarData);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.form}>
@@ -170,17 +112,41 @@ const GitHubCalendar = () => {
           <Picker.Item label="半年" value="6months" />
           <Picker.Item label="1年" value="1year" />
         </Picker>
-        <Button
-          title="データ登録"
-          onPress={() => calendarData && postRailsData(calendarData)}
-        />
+        <Button title="データ登録" onPress={handleSubmit} />
       </View>
 
       <Button title="Railsからデータ取得" onPress={getRailsData} />
 
-      {contributionsRails && (
-        <View style={styles.calendar}>
+      {/* {contributionsRails && (
+        <View style={styles.calendarRails}>
           {formatRailsData(contributionsRails).map((week, weekIndex) => (
+            <View key={weekIndex} style={styles.week}>
+              {week.contributionDays.map((day, dayIndex) => {
+                return (
+                  <View
+                    key={dayIndex}
+                    style={[
+                      styles.day,
+                      {
+                        backgroundColor: getColorForContribution(
+                          day.contribution_count,
+                        ),
+                      },
+                    ]}>
+                    <Text style={styles.tooltip}>
+                      {`${day.date}: ${day.contribution_count}`}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          ))}
+        </View>
+      )} */}
+
+      {calendarData && (
+        <View style={styles.calendar}>
+          {calendarData.map((week, weekIndex) => (
             <View key={weekIndex} style={styles.week}>
               {week.contributionDays.map((day, dayIndex) => {
                 return (
@@ -252,8 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
     borderRadius: 5, // 角を丸く
-    // backgroundColor: '#fff',
-    backgroundColor: 'yellow',
+    backgroundColor: '#fff',
   },
   pickerContainer: {
     width: '80%',
@@ -266,16 +231,30 @@ const styles = StyleSheet.create({
     // marginBottom: 20,
     borderRadius: 5, // ピッカーの角を丸く
     backgroundColor: '#fff', // 背景を白に
-    backgroundColor: 'green',
   },
-  calendar: {
+  calendarRails: {
     flexDirection: 'row',
     flexWrap: 'wrap', // 要素を折り返すように変更
     justifyContent: 'center', // 中央揃え
     padding: 10,
     marginTop: 40,
     backgroundColor: '#fff',
-    backgroundColor: 'aqua',
+
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // 影を追加
+  },
+
+  calendar: {
+    flexDirection: 'row',
+    flexWrap: 'wrap', // 要素を折り返すように変更
+    justifyContent: 'center', // 中央揃え
+    padding: 10,
+    marginTop: 40,
+    backgroundColor: 'gray',
 
     borderRadius: 8,
     shadowColor: '#000',

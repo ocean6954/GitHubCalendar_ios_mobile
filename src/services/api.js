@@ -17,6 +17,7 @@ const getDateRange = period => {
 };
 
 export const fetchData = async (username, period) => {
+  console.log('fetchDataが呼び出されました');
   const {from, to} = getDateRange(period);
   const query = `
         {
@@ -48,9 +49,27 @@ export const fetchData = async (username, period) => {
     const weeks =
       response.data.data.user.contributionsCollection.contributionCalendar
         .weeks;
+    // console.log('weeksの中身', weeks.stringify());
+    console.log(JSON.stringify(weeks, null, 2));
+
     return weeks;
   } catch (error) {
     console.error('Error fetching GitHub contributions:', error);
     return [];
+  }
+};
+
+export const postRailsData = async week => {
+  console.log('postRailsDataが呼び出されました!');
+  if (week) {
+    try {
+      const postData = await axios.post(
+        'http://127.0.0.1:3000/api/contributions',
+        week,
+      );
+      console.log('postするデータ', postData);
+    } catch (error) {
+      console.error(error);
+    }
   }
 };

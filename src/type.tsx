@@ -1,17 +1,13 @@
-export interface ContributionDay {
+type ContributionDay = {
   date: string;
-  contributionCount: number;
-}
+  contribution_count: number;
+};
 
-export interface Week {
+type Week = {
   contributionDays: ContributionDay[];
-}
+};
 
-export interface Contribution {
-  id?: number;
-  date: string;
-  contributionCount: number;
-}
+export type Weeks = Week[];
 
 export interface ContributionRails {
   date: string;
