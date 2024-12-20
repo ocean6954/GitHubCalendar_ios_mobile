@@ -75,7 +75,6 @@ const GitHubCalendar = () => {
         const response = await axios.get(
           'http://127.0.0.1:3000/api/contributions',
         );
-        // console.log('レスポンスデータ', response.data);
         setContributionsRails(response.data);
       } catch (error) {
         console.error(error);
