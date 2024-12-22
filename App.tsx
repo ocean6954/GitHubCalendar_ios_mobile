@@ -12,10 +12,7 @@ import {Picker} from '@react-native-picker/picker';
 import {fetchData, postRailsData} from './src/services/api';
 
 import {ContributionRails, Weeks} from './src/type';
-import {testWeeksData} from './test';
 import axios from 'axios';
-
-const testData = testWeeksData;
 
 const GitHubCalendar = () => {
   const [calendarData, setCalendarData] = useState<Weeks>();
@@ -116,7 +113,7 @@ const GitHubCalendar = () => {
 
       <Button title="Railsからデータ取得" onPress={getRailsData} />
 
-      {/* {contributionsRails && (
+      {contributionsRails && (
         <View style={styles.calendarRails}>
           {formatRailsData(contributionsRails).map((week, weekIndex) => (
             <View key={weekIndex} style={styles.week}>
@@ -141,7 +138,7 @@ const GitHubCalendar = () => {
             </View>
           ))}
         </View>
-      )} */}
+      )}
 
       {calendarData && (
         <View style={styles.calendar}>

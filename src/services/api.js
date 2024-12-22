@@ -1,5 +1,7 @@
 import axios from 'axios';
 import {REACT_APP_GITHUB_TOKEN} from '@env';
+import {testWeeksData} from '../../test';
+const testData = testWeeksData;
 
 const getDateRange = period => {
   const toDate = new Date(); // 現在の日付
@@ -49,7 +51,6 @@ export const fetchData = async (username, period) => {
     const weeks =
       response.data.data.user.contributionsCollection.contributionCalendar
         .weeks;
-    // console.log('weeksの中身', weeks.stringify());
     console.log(JSON.stringify(weeks, null, 2));
 
     return weeks;
@@ -61,6 +62,8 @@ export const fetchData = async (username, period) => {
 
 export const postRailsData = async week => {
   console.log('postRailsDataが呼び出されました!');
+  console.log('weekの中身は!', JSON.stringify(week, null, 2));
+
   if (week) {
     try {
       const postData = await axios.post(
@@ -71,5 +74,7 @@ export const postRailsData = async week => {
     } catch (error) {
       console.error(error);
     }
+  } else {
+    console.log('渡ってきたデータが無いです！');
   }
 };
