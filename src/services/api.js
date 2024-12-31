@@ -51,7 +51,7 @@ export const fetchData = async (username, period) => {
     const weeks =
       response.data.data.user.contributionsCollection.contributionCalendar
         .weeks;
-    console.log(JSON.stringify(weeks, null, 2));
+    // console.log(JSON.stringify(weeks, null, 2));
 
     return weeks;
   } catch (error) {
@@ -61,8 +61,8 @@ export const fetchData = async (username, period) => {
 };
 
 export const postRailsData = async week => {
-  console.log('postRailsDataが呼び出されました!');
-  console.log('weekの中身は!', JSON.stringify(week, null, 2));
+  // console.log('postRailsDataが呼び出されました!');
+  // console.log('weekの中身は!', JSON.stringify(week, null, 2));
 
   if (week) {
     try {

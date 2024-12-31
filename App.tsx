@@ -82,6 +82,8 @@ const GitHubCalendar = () => {
   };
 
   const handleSubmit = () => {
+    console.log('handleSubmitが呼び出されました');
+    console.log('送るデータ:', calendarData);
     postRailsData(calendarData);
   };
 
