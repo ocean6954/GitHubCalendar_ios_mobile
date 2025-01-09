@@ -61,9 +61,6 @@ export const fetchData = async (username, period) => {
 };
 
 export const postRailsData = async week => {
-  // console.log('postRailsDataが呼び出されました!');
-  // console.log('weekの中身は!', JSON.stringify(week, null, 2));
-
   if (week) {
     try {
       const postData = await axios.post(
@@ -72,6 +69,7 @@ export const postRailsData = async week => {
       );
       console.log('postするデータ', postData);
     } catch (error) {
+      console.log('postメソッド中にエラーが発生しました。エラー内容は');
       console.error(error);
     }
   } else {
