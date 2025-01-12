@@ -25,7 +25,7 @@ const GitHubCalendar = () => {
   const getContribution = async () => {
     if (username) {
       const weeks = await fetchData(username, period);
-      console.log('weeksは', JSON.stringify(weeks, null, 2));
+      // console.log('weeksは', JSON.stringify(weeks, null, 2));
       setCalendarData(weeks);
     }
   };

@@ -51,8 +51,6 @@ export const fetchData = async (username, period) => {
     const weeks =
       response.data.data.user.contributionsCollection.contributionCalendar
         .weeks;
-    // console.log(JSON.stringify(weeks, null, 2));
-
     return weeks;
   } catch (error) {
     console.error('Error fetching GitHub contributions:', error);
